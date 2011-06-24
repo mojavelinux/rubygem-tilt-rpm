@@ -6,12 +6,14 @@
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gemname}
 Version: 1.2.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gemname}
 Source0: http://rubygems.org/gems/%{gemname}-%{version}.gem
-
+# Fixes rhbz#715713
+# https://github.com/rtomayko/tilt/issues/93
+Patch0: Fix-compilesite-test-for-multiple-threads.patch
 Requires: ruby(abi) = %{rubyabi}
 Requires: rubygems
 Requires: ruby
@@ -33,16 +35,27 @@ Requires:%{name} = %{version}-%{release}
 Documentation for %{name}
 
 %prep
+%setup -q -c -T
+mkdir -p .%{gemdir}
+gem install --local --install-dir .%{gemdir} \
+            --bindir .%{_bindir} \
+            --force %{SOURCE0}
+
+pushd .%{geminstdir}
+%patch0 -p1
+popd
 
 %build
 
 %install
 mkdir -p %{buildroot}%{gemdir}
-gem install --local --install-dir %{buildroot}%{gemdir} \
-            --force --rdoc %{SOURCE0}
-mkdir -p %{buildroot}/%{_bindir}
-mv %{buildroot}%{gemdir}/bin/* %{buildroot}/%{_bindir}
-rmdir %{buildroot}%{gemdir}/bin
+cp -a .%{gemdir}/* \
+        %{buildroot}%{gemdir}/
+
+mkdir -p %{buildroot}%{_bindir}
+cp -a .%{_bindir}/* \
+        %{buildroot}%{_bindir}/
+
 find %{buildroot}%{geminstdir}/bin -type f | xargs chmod a+x
 
 %check
@@ -69,6 +82,9 @@ RUBYOPT="Ilib" testrb test/*_test.rb
 
 
 %changelog
+* Fri Jun 24 2011 Vít Ondruch <vondruch@redhat.com> - 1.2.2-3
+- Fixes FTBFS (rhbz#715713).
+
 * Thu Feb 10 2011 Vít Ondruch <vondruch@redhat.com> - 1.2.2-2
 - Test moved to doc subpackage
 - %{gemname} macro used whenever possible.
