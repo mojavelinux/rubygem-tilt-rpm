@@ -1,12 +1,14 @@
-%global gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 %global gemname tilt
+
+%global gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 %global geminstdir %{gemdir}/gems/%{gemname}-%{version}
+
 %global rubyabi 1.8
 
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gemname}
-Version: 1.2.2
-Release: 3%{?dist}
+Version: 1.3.2
+Release: 1%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gemname}
@@ -15,10 +17,24 @@ Source0: http://rubygems.org/gems/%{gemname}-%{version}.gem
 # https://github.com/rtomayko/tilt/issues/93
 Patch0: Fix-compilesite-test-for-multiple-threads.patch
 Requires: ruby(abi) = %{rubyabi}
-Requires: rubygems
+Requires: ruby(rubygems)
 Requires: ruby
-BuildRequires: rubygems
+BuildRequires: ruby(abi) = %{rubyabi}
+BuildRequires: ruby(rubygems)
 BuildRequires: ruby
+BuildRequires: rubygem(nokogiri)
+BuildRequires: rubygem(erubis)
+BuildRequires: rubygem(haml)
+BuildRequires: rubygem(builder)
+BuildRequires: rubygem(RedCloth)
+
+# Markaby test fails. It is probably due to rather old version found in Fedora.
+# https://github.com/rtomayko/tilt/issues/96
+# BuildRequires: rubygem(markaby)
+
+# RDiscount test fails. Is it due to old version in Fedora?
+# BuildRequires: rubygem(rdiscount)
+
 BuildArch: noarch
 Provides: rubygem(%{gemname}) = %{version}
 
@@ -60,11 +76,12 @@ find %{buildroot}%{geminstdir}/bin -type f | xargs chmod a+x
 
 %check
 pushd %{buildroot}%{geminstdir}
-RUBYOPT="Ilib" testrb test/*_test.rb
+RUBYOPT="rubygems Ilib" testrb test/*_test.rb
+popd
 
 %files
-%defattr(-, root, root, -)
 %{_bindir}/%{gemname}
+%exclude %{geminstdir}/%{gemname}.gemspec
 %{geminstdir}/bin
 %{geminstdir}/lib
 %doc %{geminstdir}/COPYING
@@ -74,14 +91,16 @@ RUBYOPT="Ilib" testrb test/*_test.rb
 %{gemdir}/specifications/%{gemname}-%{version}.gemspec
 
 %files doc
-%defattr(-, root, root, -)
 %{geminstdir}/Rakefile
-%{geminstdir}/%{gemname}.gemspec
 %doc %{gemdir}/doc/%{gemname}-%{version}
 %{geminstdir}/test
 
 
 %changelog
+* Wed Jul 20 2011 Vít Ondruch <vondruch@redhat.com> - 1.3.2-1
+- Updated to the tilt 1.3.2.
+- Test suite for erubis, haml, builder and RedCloth template engines enabled.
+
 * Fri Jun 24 2011 Vít Ondruch <vondruch@redhat.com> - 1.2.2-3
 - Fixes FTBFS (rhbz#715713).
 
