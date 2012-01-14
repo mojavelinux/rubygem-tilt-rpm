@@ -8,7 +8,7 @@
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gemname}
 Version: 1.3.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gemname}
@@ -97,6 +97,9 @@ popd
 
 
 %changelog
+* Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Wed Jul 20 2011 Vít Ondruch <vondruch@redhat.com> - 1.3.2-1
 - Updated to the tilt 1.3.2.
 - Test suite for erubis, haml, builder and RedCloth template engines enabled.
