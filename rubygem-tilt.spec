@@ -7,15 +7,12 @@
 
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gemname}
-Version: 1.3.2
-Release: 2%{?dist}
+Version: 1.3.3
+Release: 1%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gemname}
 Source0: http://rubygems.org/gems/%{gemname}-%{version}.gem
-# Fixes rhbz#715713
-# https://github.com/rtomayko/tilt/issues/93
-Patch0: Fix-compilesite-test-for-multiple-threads.patch
 Requires: ruby(abi) = %{rubyabi}
 Requires: ruby(rubygems)
 Requires: ruby
@@ -57,10 +54,6 @@ gem install --local --install-dir .%{gemdir} \
             --bindir .%{_bindir} \
             --force %{SOURCE0}
 
-pushd .%{geminstdir}
-%patch0 -p1
-popd
-
 %build
 
 %install
@@ -82,6 +75,9 @@ popd
 %files
 %{_bindir}/%{gemname}
 %exclude %{geminstdir}/%{gemname}.gemspec
+%exclude %{geminstdir}/.sass-cache
+%exclude %{geminstdir}/.yardoc
+%exclude %{geminstdir}/Gemfile
 %{geminstdir}/bin
 %{geminstdir}/lib
 %doc %{geminstdir}/COPYING
@@ -97,6 +93,11 @@ popd
 
 
 %changelog
+* Mon Jan 16 2012 Bohuslav Kabrda <bkabrda@redhat.com> - 1.3.3-1
+- Updated to tilt 1.3.3.
+- Removed patch that fixed BZ #715713, as it is a part of this version.
+- Excluded unnecessary files.
+
 * Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
