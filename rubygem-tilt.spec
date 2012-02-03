@@ -1,12 +1,12 @@
 %global gem_name tilt
 
 %global rubyabi 1.9.1
-%global bootstrap 1
+%global bootstrap 0
 
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gem_name}
 Version: 1.3.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gem_name}
@@ -71,7 +71,7 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %check
 %if 0%{bootstrap} < 1
 pushd %{buildroot}%{gem_instdir}
-RUBYOPT="rubygems Ilib" testrb test/*_test.rb
+LANG=en_US.utf8 testrb -Ilib test/*_test.rb
 popd
 %endif
 
@@ -98,6 +98,9 @@ popd
 
 
 %changelog
+* Fri Feb 03 2012 Bohuslav Kabrda <bkabrda@redhat.com> - 1.3.3-3
+- Allowed running the tests.
+
 * Tue Jan 24 2012 Bohuslav Kabrda <bkabrda@redhat.com> - 1.3.3-2
 - Rebuilt for Ruby 1.9.3.
 - Introduced %%bootstrap macro to deal with dependency loop for BuildRequires.
