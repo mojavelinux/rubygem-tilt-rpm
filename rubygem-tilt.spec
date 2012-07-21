@@ -6,7 +6,7 @@
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gem_name}
 Version: 1.3.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gem_name}
@@ -98,6 +98,9 @@ popd
 
 
 %changelog
+* Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.3-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Fri Feb 03 2012 Bohuslav Kabrda <bkabrda@redhat.com> - 1.3.3-3
 - Allowed running the tests.
 
