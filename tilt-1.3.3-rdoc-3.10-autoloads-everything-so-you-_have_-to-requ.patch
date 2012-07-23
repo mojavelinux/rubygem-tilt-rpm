@@ -1,0 +1,69 @@
+From ecdf14893b40cc1bc21aaedca9578d36d264f89e Mon Sep 17 00:00:00 2001
+From: Tim Felgentreff <timfelgentreff@gmail.com>
+Date: Mon, 10 Oct 2011 18:50:29 -0700
+Subject: [PATCH] rdoc 3.10 autoloads everything, so you _have_ to require
+ 'rdoc' directly. leave other requires for backwards compat
+
+---
+ TEMPLATES.md                   |    6 +++---
+ lib/tilt/rdoc.rb               |    7 ++++---
+ test/tilt_rdoctemplate_test.rb |    1 +
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/TEMPLATES.md b/TEMPLATES.md
+index 929fc01..f931415 100644
+--- a/TEMPLATES.md
++++ b/TEMPLATES.md
+@@ -407,9 +407,9 @@ library.
+ 
+ ### Usage
+ 
+-__NOTE:__ It's suggested that your program `require 'rdoc/markup'` and
+-`require 'rdoc/markup/to_html'` at load time when using this template
+-engine in a threaded environment.
++__NOTE:__ It's suggested that your program `require 'rdoc'`,
++`require 'rdoc/markup'`, and `require 'rdoc/markup/to_html'` at load time
++when using this template engine in a threaded environment.
+ 
+ ### See also
+ 
+diff --git a/lib/tilt/rdoc.rb b/lib/tilt/rdoc.rb
+index cbec4d1..33450e5 100644
+--- a/lib/tilt/rdoc.rb
++++ b/lib/tilt/rdoc.rb
+@@ -4,9 +4,9 @@ module Tilt
+   # RDoc template. See:
+   # http://rdoc.rubyforge.org/
+   #
+-  # It's suggested that your program require 'rdoc/markup' and
+-  # 'rdoc/markup/to_html' at load time when using this template
+-  # engine.
++  # It's suggested that your program `require 'rdoc/markup'` and
++  # `require 'rdoc/markup/to_html'` at load time when using this template
++  # engine in a threaded environment.
+   class RDocTemplate < Template
+     self.default_mime_type = 'text/html'
+ 
+@@ -15,6 +15,7 @@ module Tilt
+     end
+ 
+     def initialize_engine
++      require_template_library 'rdoc'
+       require_template_library 'rdoc/markup'
+       require_template_library 'rdoc/markup/to_html'
+     end
+diff --git a/test/tilt_rdoctemplate_test.rb b/test/tilt_rdoctemplate_test.rb
+index 49d6a09..309a048 100644
+--- a/test/tilt_rdoctemplate_test.rb
++++ b/test/tilt_rdoctemplate_test.rb
+@@ -2,6 +2,7 @@ require 'contest'
+ require 'tilt'
+ 
+ begin
++  require 'rdoc'
+   require 'rdoc/markup'
+   require 'rdoc/markup/to_html'
+   class RDocTemplateTest < Test::Unit::TestCase
+-- 
+1.7.10.4
+

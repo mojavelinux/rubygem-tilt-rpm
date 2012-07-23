@@ -1,0 +1,114 @@
+From 173ade03fb72ade7f3aed948e104e26de043f6cf Mon Sep 17 00:00:00 2001
+From: Joshua Peek <josh@joshpeek.com>
+Date: Tue, 10 Jan 2012 11:01:12 -0600
+Subject: [PATCH] Ensure coffee-script test examples force a closure
+
+---
+ test/tilt_coffeescripttemplate_test.rb |   62 ++++++++++++++++++++++++++------
+ 1 file changed, 52 insertions(+), 10 deletions(-)
+
+diff --git a/test/tilt_coffeescripttemplate_test.rb b/test/tilt_coffeescripttemplate_test.rb
+index 8be7bd5..e52bf26 100644
+--- a/test/tilt_coffeescripttemplate_test.rb
++++ b/test/tilt_coffeescripttemplate_test.rb
+@@ -9,6 +9,10 @@ begin
+       assert_equal Tilt::CoffeeScriptTemplate, Tilt['test.coffee']
+     end
+ 
++    test "bare is disabled by default" do
++      assert_equal false, Tilt::CoffeeScriptTemplate.default_bare
++    end
++
+     test "compiles and evaluates the template on #render" do
+       template = Tilt::CoffeeScriptTemplate.new { |t| "puts 'Hello, World!'\n" }
+       assert_match "puts('Hello, World!');", template.render
+@@ -20,18 +24,25 @@ begin
+     end
+ 
+     test "disabling coffee-script wrapper" do
+-      str = "puts 'Hello, World!'\n"
++      str = 'name = "Josh"; puts "Hello #{name}"'
++
++      template = Tilt::CoffeeScriptTemplate.new { str }
++      assert_match "(function() {", template.render
++      assert_match "puts(\"Hello \" + name);\n", template.render
+ 
+       template = Tilt::CoffeeScriptTemplate.new(:bare => true) { str }
+-      assert_equal "puts('Hello, World!');", template.render
++      assert_not_match "(function() {", template.render
++      assert_equal "var name;\n\nname = \"Josh\";\n\nputs(\"Hello \" + name);\n", template.render
+ 
+       template2 = Tilt::CoffeeScriptTemplate.new(:no_wrap => true) { str}
+-      assert_equal "puts('Hello, World!');", template.render
++      assert_not_match "(function() {", template.render
++      assert_equal "var name;\n\nname = \"Josh\";\n\nputs(\"Hello \" + name);\n", template.render
+     end
+ 
+-    context "disabling coffee-script wrapper globally" do
++    context "wrapper globally enabled" do
+       setup do
+         @bare = Tilt::CoffeeScriptTemplate.default_bare
++        Tilt::CoffeeScriptTemplate.default_bare = false
+       end
+ 
+       teardown do
+@@ -39,19 +50,50 @@ begin
+       end
+ 
+       test "no options" do
+-        template = Tilt::CoffeeScriptTemplate.new { |t| "puts 'Hello, World!'\n" }
+-        assert_match "puts('Hello, World!');", template.render
++        template = Tilt::CoffeeScriptTemplate.new { |t| 'name = "Josh"; puts "Hello, #{name}"' }
++        assert_match "puts(\"Hello, \" + name);", template.render
+         assert_match "(function() {", template.render
+       end
+ 
+       test "overridden by :bare" do
+-        template = Tilt::CoffeeScriptTemplate.new(:bare => false) { "puts 'Hello, World!'\n" }
+-        assert_not_equal "puts('Hello, World!');", template.render
++        template = Tilt::CoffeeScriptTemplate.new(:bare => true) { |t| 'name = "Josh"; puts "Hello, #{name}"' }
++        assert_match "puts(\"Hello, \" + name);", template.render
++        assert_not_match "(function() {", template.render
+       end
+ 
+       test "overridden by :no_wrap" do
+-        template = Tilt::CoffeeScriptTemplate.new(:no_wrap => false) { "puts 'Hello, World!'\n" }
+-        assert_not_equal "puts('Hello, World!');", template.render
++        template = Tilt::CoffeeScriptTemplate.new(:no_wrap => true) { |t| 'name = "Josh"; puts "Hello, #{name}"' }
++        assert_match "puts(\"Hello, \" + name);", template.render
++        assert_not_match "(function() {", template.render
++      end
++    end
++
++    context "wrapper globally disabled" do
++      setup do
++        @bare = Tilt::CoffeeScriptTemplate.default_bare
++        Tilt::CoffeeScriptTemplate.default_bare = true
++      end
++
++      teardown do
++        Tilt::CoffeeScriptTemplate.default_bare = @bare
++      end
++
++      test "no options" do
++        template = Tilt::CoffeeScriptTemplate.new { |t| 'name = "Josh"; puts "Hello, #{name}"' }
++        assert_match "puts(\"Hello, \" + name);", template.render
++        assert_not_match "(function() {", template.render
++      end
++
++      test "overridden by :bare" do
++        template = Tilt::CoffeeScriptTemplate.new(:bare => false) { |t| 'name = "Josh"; puts "Hello, #{name}"' }
++        assert_match "puts(\"Hello, \" + name);", template.render
++        assert_match "(function() {", template.render
++      end
++
++      test "overridden by :no_wrap" do
++        template = Tilt::CoffeeScriptTemplate.new(:no_wrap => false) { |t| 'name = "Josh"; puts "Hello, #{name}"' }
++        assert_match "puts(\"Hello, \" + name);", template.render
++        assert_match "(function() {", template.render
+       end
+     end
+   end
+-- 
+1.7.10.4
+

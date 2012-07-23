@@ -1,0 +1,68 @@
+From 87f0358d7e9968c55a28356e2a221d938fc51775 Mon Sep 17 00:00:00 2001
+From: Davide D'Agostino <d.dagostino@lipsiasoft.com>
+Date: Thu, 23 Feb 2012 18:29:33 +0100
+Subject: [PATCH] Redcarpet2 as default
+
+---
+ lib/tilt/markdown.rb                |    2 +-
+ test/tilt_markdown_test.rb          |    2 +-
+ test/tilt_redcarpettemplate_test.rb |    9 +++++++--
+ 3 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/lib/tilt/markdown.rb b/lib/tilt/markdown.rb
+index 322b0f8..396fb12 100644
+--- a/lib/tilt/markdown.rb
++++ b/lib/tilt/markdown.rb
+@@ -53,7 +53,7 @@ module Tilt
+     end
+ 
+     def prepare
+-      klass = [Redcarpet1, Redcarpet2].detect { |e| e.engine_initialized? }
++      klass = [Redcarpet2, Redcarpet1].detect { |e| e.engine_initialized? }
+       @engine = klass.new(file, line, options) { data }
+     end
+ 
+diff --git a/test/tilt_markdown_test.rb b/test/tilt_markdown_test.rb
+index f67a8e2..ba83e60 100644
+--- a/test/tilt_markdown_test.rb
++++ b/test/tilt_markdown_test.rb
+@@ -98,7 +98,7 @@ begin
+ 
+     def test_smarty_pants_true
+       html = nrender "Hello ``World'' -- This is --- a test ...", :smartypants => true
+-      assert_equal "<p>Hello “World” – This is — a test …</p>", html
++      assert_equal "<p>Hello “World'' – This is — a test …</p>", html
+     end
+   end
+ rescue LoadError => boom
+diff --git a/test/tilt_redcarpettemplate_test.rb b/test/tilt_redcarpettemplate_test.rb
+index 2fb0835..54723d1 100644
+--- a/test/tilt_redcarpettemplate_test.rb
++++ b/test/tilt_redcarpettemplate_test.rb
+@@ -37,6 +37,11 @@ begin
+       end
+     end
+ 
++    test "redcarpet2 is our default choice" do
++      template = Tilt::RedcarpetTemplate.new {}
++      assert_equal Tilt::RedcarpetTemplate::Redcarpet2, template.prepare.class
++    end
++
+     test "preparing and evaluating templates on #render" do
+       template = Tilt::RedcarpetTemplate.new { |t| "# Hello World!" }
+       assert_equal "<h1>Hello World!</h1>\n", template.render
+@@ -48,9 +53,9 @@ begin
+     end
+ 
+     test "smartypants when :smart is set" do
+-      template = Tilt::RedcarpetTemplate.new(:smart => true) { |t|
++      template = Tilt::RedcarpetTemplate.new(:smartypants => true) { |t|
+         "OKAY -- 'Smarty Pants'" }
+-      assert_match /<p>OKAY &[nm]dash; &lsquo;Smarty Pants&rsquo;<\/p>/,
++      assert_match /<p>OKAY &ndash; &#39;Smarty Pants&#39;<\/p>/,
+         template.render
+     end
+   end
+-- 
+1.7.10.4
+

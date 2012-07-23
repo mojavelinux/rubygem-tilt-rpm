@@ -1,0 +1,31 @@
+From ff097e8722056dfef6ac4523d406bdbca6eae87d Mon Sep 17 00:00:00 2001
+From: HannesG <hag@informatik.uni-kiel.de>
+Date: Sun, 8 Jan 2012 21:15:26 +0100
+Subject: [PATCH] adjusted specs to RDoc >= 3.10 ( which outputs header ids )
+
+---
+ test/tilt_rdoctemplate_test.rb |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/test/tilt_rdoctemplate_test.rb b/test/tilt_rdoctemplate_test.rb
+index 309a048..33d8e20 100644
+--- a/test/tilt_rdoctemplate_test.rb
++++ b/test/tilt_rdoctemplate_test.rb
+@@ -12,12 +12,12 @@ begin
+ 
+     test "preparing and evaluating the template with #render" do
+       template = Tilt::RDocTemplate.new { |t| "= Hello World!" }
+-      assert_equal "<h1>Hello World!</h1>", template.render.strip
++      assert_equal "<h1 id=\"label-Hello+World%21\">Hello World!</h1>", template.render.strip
+     end
+ 
+     test "can be rendered more than once" do
+       template = Tilt::RDocTemplate.new { |t| "= Hello World!" }
+-      3.times { assert_equal "<h1>Hello World!</h1>", template.render.strip }
++      3.times { assert_equal "<h1 id=\"label-Hello+World%21\">Hello World!</h1>", template.render.strip }
+     end
+   end
+ rescue LoadError => boom
+-- 
+1.7.10.4
+
