@@ -6,7 +6,7 @@
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gem_name}
 Version: 1.3.3
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gem_name}
@@ -123,6 +123,9 @@ popd
 
 
 %changelog
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.3-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Mon Jul 23 2012 Vít Ondruch <vondruch@redhat.com> - 1.3.3-5
 - Fixes RDoc >= 3.10 compatibility.
 - Enabled coffee-script and redcarpet tests.
