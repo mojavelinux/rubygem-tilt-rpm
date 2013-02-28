@@ -1,12 +1,11 @@
 %global gem_name tilt
 
-%global rubyabi 1.9.1
 %global bootstrap 0
 
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gem_name}
 Version: 1.3.3
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://github.com/rtomayko/%{gem_name}
@@ -25,10 +24,10 @@ Patch2: tilt-1.3.3-Redcarpet2-as-default.patch
 # https://github.com/rtomayko/tilt/commit/173ade03fb72ade7f3aed948e104e26de043f6cf
 Patch3: tilt-1.3.3-ensure-coffee-script-test-examples-force-a-closure.patch
 
-Requires: ruby(abi) = %{rubyabi}
+Requires: ruby(release)
 Requires: ruby(rubygems)
 Requires: ruby
-BuildRequires: ruby(abi) = %{rubyabi}
+BuildRequires: ruby(release)
 BuildRequires: rubygems-devel
 BuildRequires: ruby
 %if 0%{bootstrap} < 1
@@ -68,10 +67,7 @@ Documentation for %{name}
 
 %prep
 %setup -q -c -T
-mkdir -p .%{gem_dir}
-gem install --local --install-dir .%{gem_dir} \
-            --bindir .%{_bindir} \
-            --force %{SOURCE0}
+%gem_install -n %{SOURCE0}
 
 pushd .%{gem_instdir}
 %patch0 -p1
@@ -123,6 +119,9 @@ popd
 
 
 %changelog
+* Thu Feb 28 2013 Bohuslav Kabrda <bkabrda@redhat.com> - 1.3.3-7
+- Rebuild for https://fedoraproject.org/wiki/Features/Ruby_2.0.0
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.3-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
