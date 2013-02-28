@@ -1,6 +1,6 @@
 %global gem_name tilt
 
-%global bootstrap 0
+%global bootstrap 1
 
 Summary: Generic interface to multiple Ruby template engines
 Name: rubygem-%{gem_name}
